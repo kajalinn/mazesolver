@@ -1,0 +1,55 @@
+body {
+    background-color: cornsilk;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+* {
+    font-family: "TlwgMono", sans-serif;
+}
+
+
+.title{
+    margin-top: -100px;
+    display: flex;
+    justify-content: center;
+}
+
+.field{
+    display: flex;
+    justify-content: center;
+    margin: 32px;
+}
+
+.content{
+    display: grid;
+    justify-content: center;
+    height: 10vh;
+}
+
+.buttons{
+    width: 320px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+button{
+    width: 140px;
+    height: 40px;
+    border-radius: 14px;
+    background-color: lightgreen;
+}
+
+button:hover{
+    transform: scale(1.05);
+    transition: 0.3s ease-in-out;
+}
+
+h3 {
+    display: grid;
+    justify-content: center;
+}
+
