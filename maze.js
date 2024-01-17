@@ -71,7 +71,6 @@ class Maze {
                 }
             }
         }
-
         // If no path is found
         return null;
     }
@@ -92,21 +91,31 @@ class Maze {
 
     //mark current cell as visited + get neighbours of current cell
     //depth-first search (DFS) algorithm
-    generateMaze(){
-        current.visited = true
-        let next = current.getRandomNeighbour()
-        if(next){
-            next.visited = true
-            this.stack.push(current)
-            current.color = "green"
-            current.removeWalls(current, next)
-            current = next
-        } else if(this.stack.length > 0){ //if no neighbours return back through the stack
-            current.color = "white" //set backtracking color
-            // let cell = this.stack.pop()
-            current = this.stack.pop()
+    generateMaze() {
+        current.visited = true;
+        let next = current.getRandomNeighbour();
+
+        if (next) {
+            next.visited = true;
+            this.stack.push(current);
+            current.color = "green";
+            current.removeWalls(current, next);
+
+            // Introduce a probability to remove additional walls
+            if (Math.random() < 0.1) {
+                let additionalNeighbour = current.getRandomNeighbour();
+                if (additionalNeighbour) {
+                    current.removeWalls(current, additionalNeighbour);
+                }
+            }
+
+            current = next;
+        } else if (this.stack.length > 0) {
+            current.color = "white";
+            current = this.stack.pop();
         }
     }
+
 }
 
 class Cell{
@@ -256,9 +265,103 @@ maze.setup();
 maze.draw();
 
 
-function SetEndPoint() {
-    const msg = document.createElement("h3");
+
+function createBlock(row, col) {
+    const cell = maze.grid[row][col];
+
+    // Check if the cell is valid
+    if (!cell) {
+        console.error("Invalid cell coordinates");
+        return;
+    }
+
+    // Set walls for the specified cell
+    cell.walls = {
+        topWall: true,
+        bottomWall: true,
+        leftWall: true,
+        rightWall: true
+    };
+    cell.color = "red";
+
+    // Update the maze grid
+    maze.draw(); // Assuming you have a draw function in your Maze class
+}
+
+
+function setBlock(){
     const div = document.getElementsByClassName("content")[0];
+    let h3 = div.querySelector('h3');
+    if(h3){
+        console.log("DIV: ", div)
+        div.removeChild(h3);
+    }
+    const msg = document.createElement("h3");
+    msg.innerHTML = "Choose block point";
+    div.appendChild(msg);
+    let rowIndex, colIndex;
+
+    canvas.addEventListener("mousemove", handleCellHover)
+    canvas.addEventListener("click", handleCellClick)
+
+
+    function handleCellHover(event) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        colIndex = Math.floor(mouseX / (maze.size / maze.cols));
+        rowIndex = Math.floor(mouseY / (maze.size / maze.rows));
+
+        maze.grid.forEach((row) => {
+            row.forEach((cell) => {
+                cell.color = "white";
+            });
+        });
+
+        if (maze.grid[rowIndex] && maze.grid[rowIndex][colIndex]) {
+            maze.grid[rowIndex][colIndex].color = "red";
+        }
+
+        maze.draw();
+    }
+
+    function handleCellClick() {
+        const div = document.getElementsByClassName("content")[0];
+        let h3 = div.querySelector('h3');
+        if(h3){
+            console.log("DIV: ", div)
+            div.removeChild(h3);
+        }
+        canvas.removeEventListener("mousemove", handleCellHover);
+        canvas.removeEventListener("click", handleCellClick);
+        if (div.contains(msg)) {
+            div.removeChild(msg);
+        }
+
+
+        if (maze.grid[rowIndex] && maze.grid[rowIndex][colIndex]) {
+            createBlock(rowIndex, colIndex);
+            if (maze.grid[rowIndex] && maze.grid[rowIndex][colIndex]) {
+                maze.grid[rowIndex][colIndex].color = "red";
+            }
+
+            maze.draw();
+        }
+    }
+}
+
+
+
+
+function SetEndPoint() {
+    const div = document.getElementsByClassName("content")[0];
+    let h3 = div.querySelector('h3');
+    if(h3){
+        console.log("DIV: ", div)
+        div.removeChild(h3);
+    }
+    const msg = document.createElement("h3");
     msg.innerHTML = "Choose end point";
     div.appendChild(msg);
 
@@ -298,7 +401,7 @@ function SetEndPoint() {
 
         if (maze.grid[rowIndex] && maze.grid[rowIndex][colIndex]) {
             const endPoint = maze.grid[rowIndex][colIndex];
-            console.log("End point: ", endPoint);
+            // console.log("End point: ", endPoint);
             // console.log("rowNum:", endPoint.rowNum, "colNum:", endPoint.colNum);
 
             const path = maze.findShortestPath(current, endPoint);
@@ -306,11 +409,12 @@ function SetEndPoint() {
                 path.forEach(cell => {
                     cell.color = "blue";
                 });
-                console.log("Shortest path: ", path);
+                // console.log("Shortest path: ", path);
             } else {
-                console.log("No path found.");
+                msg.innerHTML = "No path found:("
+                div.appendChild(msg);
+                // console.log("No path found.");
             }
         }
     }
 }
-

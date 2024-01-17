@@ -7,20 +7,21 @@
     <link rel="stylesheet" href="maze.css">
 </head>
 <body>
-    <div class="container">
-        <div class="title">
-            <h1>MazeSolver</h1>
-        </div>
-        <div class="content">
-            <div class="buttons">
-                <button onclick="location.reload()">Generate maze</button>
-                <button onclick="SetEndPoint()">Set end point</button>
-            </div>
-        </div>
-        <div class="field">
-            <canvas></canvas>
+<div class="container">
+    <div class="title">
+        <h1>MazeSolver</h1>
+    </div>
+    <div class="content">
+        <div class="buttons">
+            <button onclick="location.reload()">Generate maze</button>
+            <button onclick="SetEndPoint()">Set end point</button>
+            <button onclick="setBlock()">Set block</button>
         </div>
     </div>
-    <script src="maze.js"></script>
+    <div class="field">
+        <canvas></canvas>
+    </div>
+</div>
+<script src="maze.js"></script>
 </body>
 </html>
